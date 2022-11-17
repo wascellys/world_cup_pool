@@ -1,1 +1,1 @@
-# world_cup_pool
+# World Cup API
