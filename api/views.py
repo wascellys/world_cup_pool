@@ -155,7 +155,7 @@ class GameViewSet(ModelViewSet):
             serializers = self.serializer_class(queryset, many=True)
             for data in serializers.data:
                 if Guess.objects.filter(game__pk=data.get("id"), participant__participant__user__id=participant.id):
-                    data['guessed'] = True
+                    data['guessed'] = Guess.objects.filter(game__pk=data.get("id"), participant__participant__user__id=participant.id).values()
                 return Response({'data': serializers.data}, status=status.HTTP_200_OK)
         except (Exception,) as e:
             return Response({'message': "Error to insert data", "detail": e.args[0]},
