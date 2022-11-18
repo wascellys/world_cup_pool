@@ -2,6 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 
 # Create your views here.
+from django.utils.decorators import method_decorator
 from rest_framework import generics, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
@@ -24,8 +25,7 @@ class ParticipantViewSet(ViewSet):
 
     def list(self, request):
         try:
-            participants = Participant.objects.all()
-            serializers = self.serializer_class(participants, many=True)
+            serializers = self.serializer_class(self.queryset, many=True)
             return Response(data=serializers.data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response(e.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -86,8 +86,6 @@ class PoolViewSet(ModelViewSet):
     def list(self, request):
         queryset = self.queryset
         try:
-            # participant = Participant.objects.get(user=self.request.user)
-            # queryset = queryset.filter(owner=participant)
             serializers = self.serializer_class(queryset, many=True)
             return Response({'data': serializers.data}, status=status.HTTP_200_OK)
         except (Exception,) as e:
@@ -127,7 +125,21 @@ class PoolViewSet(ModelViewSet):
             serializer = ParticipantPoolSerializer(result, many=True)
             return Response(serializer.data)
         else:
-            return Response('erro')
+            return Response({'message': 'data doesnt exists!'}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=True, methods=['post'])
+    def save(self, request, pk=None):
+
+        if ParticipantPool.objects.filter(pool__cod=pk, participant__user__id=self.request.user.pk):
+            return Response({'message': 'you are already participating in this pool'})
+        else:
+            try:
+                participant = Participant.objects.get(user=self.request.user)
+                pool = Pool.objects.get(cod=pk)
+                ParticipantPool.objects.create(pool=pool, participant=participant)
+                return Response({'message': 'success'})
+            except (Exception,) as e:
+                return Response({'message': 'error when trying to participate in the pool'})
 
 
 class GameViewSet(ModelViewSet):
@@ -135,6 +147,19 @@ class GameViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = Game.objects.all()
     serializer_class = GameSerializer
+
+    def list(self, request, *args, **kwargs):
+        participant = Participant.objects.get(user=self.request.user)
+        queryset = self.queryset
+        try:
+            serializers = self.serializer_class(queryset, many=True)
+            for data in serializers.data:
+                if Guess.objects.filter(game__pk=data.get("id"), participant__participant__user__id=participant.id):
+                    data['guessed'] = True
+                return Response({'data': serializers.data}, status=status.HTTP_200_OK)
+        except (Exception,) as e:
+            return Response({'message': "Error to insert data", "detail": e.args[0]},
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 class ParticipantPoolViewSet(ModelViewSet):
