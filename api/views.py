@@ -24,8 +24,9 @@ class ParticipantViewSet(ViewSet):
     serializer_class = ParticipantSerializer
 
     def list(self, request):
+        queryset = self.queryset
         try:
-            serializers = self.serializer_class(self.queryset, many=True)
+            serializers = self.serializer_class(queryset, many=True)
             return Response(data=serializers.data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response(e.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -156,7 +157,7 @@ class GameViewSet(ModelViewSet):
             for data in serializers.data:
                 if Guess.objects.filter(game__pk=data.get("id"), participant__participant__user__id=participant.id):
                     data['guessed'] = Guess.objects.filter(game__pk=data.get("id"), participant__participant__user__id=participant.id).values()
-                return Response({'data': serializers.data}, status=status.HTTP_200_OK)
+            return Response({'data': serializers.data}, status=status.HTTP_200_OK)
         except (Exception,) as e:
             return Response({'message': "Error to insert data", "detail": e.args[0]},
                             status=status.HTTP_400_BAD_REQUEST)
