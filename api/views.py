@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 
@@ -26,7 +28,8 @@ class ParticipantViewSet(ViewSet):
     def list(self, request):
         queryset = self.queryset
         try:
-            serializers = self.serializer_class(queryset, many=True)
+            participants = Participant.objects.all()
+            serializers = self.serializer_class(participants, many=True)
             return Response(data=serializers.data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response(e.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -85,9 +88,9 @@ class PoolViewSet(ModelViewSet):
     serializer_class = PoolSerializer
 
     def list(self, request):
-        queryset = self.queryset
         try:
-            serializers = self.serializer_class(queryset, many=True)
+            polls = Pool.objects.all()
+            serializers = self.serializer_class(polls, many=True)
             return Response({'data': serializers.data}, status=status.HTTP_200_OK)
         except (Exception,) as e:
             return Response({'message': "Error to insert data", "detail": e.args[0]},
@@ -142,6 +145,57 @@ class PoolViewSet(ModelViewSet):
             except (Exception,) as e:
                 return Response({'message': 'error when trying to participate in the pool'})
 
+    @action(detail=True, methods=['get'])
+    def games(self, request, pk=None):
+        serializer_class = GameSerializer
+        games = Game.objects.all()
+        pool = Pool.objects.get(cod=pk)
+        try:
+            serializers = serializer_class(games, many=True)
+            pools_serializer = PoolSerializer(pool)
+
+            for data in serializers.data:
+                if Guess.objects.filter(game__pk=data.get("id"),
+                                        participant__participant__user__id=self.request.user.id,
+                                        participant__pool__cod=pk):
+                    data['guessed'] = Guess.objects.filter(game__pk=data.get("id"),
+                                                           participant__participant__user__id=self.request.user.id,
+                                                           participant__pool__cod=pk).values()
+            return Response({'games': serializers.data, 'pool': pools_serializer.data},
+                            status=status.HTTP_200_OK)
+        except (Exception,) as e:
+            return Response({'message': "Error to insert data", "detail": e.args[0]},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['get'])
+    def ranking(self, request, pk=None):
+        participants = ParticipantPool.objects.filter(pool__cod=pk).order_by("participant__user__first_name")
+        try:
+            pool = Pool.objects.get(cod=pk)
+            serializer_pool = PoolSerializer(pool)
+            participants_poins = []
+            for participant in participants:
+                participant_guesses = Guess.objects.filter(participant=participant)
+                points = 0
+                for guess in participant_guesses:
+                    if guess.guess_first_team is not None and guess.guess_second_team is not None and guess.game.score_first_team is not None and guess.game.score_second_team is not None:
+                        if guess.guess_first_team == guess.game.score_first_team and guess.guess_second_team == guess.game.score_second_team:
+                            points += Decimal(participant.pool.correct_score)
+                        elif (
+                                guess.guess_first_team > guess.guess_second_team and guess.game.score_first_team > guess.game.score_second_team) or (
+                                guess.guess_first_team < guess.guess_second_team and guess.game.score_first_team < guess.game.score_second_team) or (
+                                guess.guess_first_team == guess.guess_second_team and guess.game.score_first_team == guess.game.score_second_team):
+                            points += Decimal(participant.pool.result_score)
+
+                participant_serializer = ParticipantSerializer(participant.participant)
+                participants_poins.append({'participant': participant_serializer.data, 'points': points})
+
+            ranking = sorted(participants_poins, key=lambda k: k['points'], reverse=True)
+            return Response({'ranking': ranking, 'pool': serializer_pool.data}, status=status.HTTP_200_OK)
+        except (Exception,) as e:
+            return Response({'message': "Error to get data", "detail": e.args[0]},
+                            status=status.HTTP_400_BAD_REQUEST)
+
 
 class GameViewSet(ModelViewSet):
     authentication_classes = [TokenAuthentication]
@@ -151,12 +205,14 @@ class GameViewSet(ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         participant = Participant.objects.get(user=self.request.user)
-        queryset = self.queryset
         try:
-            serializers = self.serializer_class(queryset, many=True)
+            games = Game.objects.all()
+            serializers = self.serializer_class(games, many=True)
             for data in serializers.data:
-                if Guess.objects.filter(game__pk=data.get("id"), participant__participant__user__id=participant.id):
-                    data['guessed'] = Guess.objects.filter(game__pk=data.get("id"), participant__participant__user__id=participant.id).values()
+                if Guess.objects.filter(game__pk=data.get("id"),
+                                        participant__participant__user__id=participant.user.id):
+                    data['guessed'] = Guess.objects.filter(game__pk=data.get("id"),
+                                                           participant__participant__user__id=participant.user.id).values()
             return Response({'data': serializers.data}, status=status.HTTP_200_OK)
         except (Exception,) as e:
             return Response({'message': "Error to insert data", "detail": e.args[0]},
@@ -170,10 +226,10 @@ class ParticipantPoolViewSet(ModelViewSet):
     serializer_class = ParticipantPoolSerializer
 
     def list(self, request):
-        queryset = self.queryset
+        participants_pool = ParticipantPool.objects.all()
         try:
             participant = ParticipantPool.objects.get(user=self.request.user)
-            queryset = queryset.filter(owner=participant)
+            queryset = participants_pool.filter(owner=participant)
             serializers = self.serializer_class(queryset, many=True)
             return Response({'data': serializers.data}, status=status.HTTP_200_OK)
         except (Exception,) as e:

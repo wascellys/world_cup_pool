@@ -53,6 +53,7 @@ class Game(models.Model):
     city = models.CharField(max_length=100, null=True, blank=True)
     stadium = models.CharField(max_length=100, null=True, blank=True)
     round = models.CharField(max_length=100, null=True, blank=True)
+    group = models.CharField(max_length=1, null=True, blank=True)
 
     def __str__(self):
         return f"{self.first_team} X {self.second_team}"
@@ -68,4 +69,4 @@ class Guess(models.Model):
         unique_together = ['game', 'participant']
 
     def __str__(self):
-        return str(self.participant.participant.user.get_full_name())
+        return f'{self.participant.participant.user.get_full_name()} ({self.game})'
