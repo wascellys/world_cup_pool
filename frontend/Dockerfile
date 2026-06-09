@@ -8,10 +8,11 @@ ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 
 COPY package*.json ./
-RUN npm install --production
+RUN npm ci
 
 COPY . .
 RUN npm run build
+RUN npm prune --omit=dev
 
 EXPOSE 3000
 CMD ["npm", "run", "start"]

@@ -45,6 +45,7 @@ def auth_login(request):
     participant = getattr(user, 'participant', None)
     return Response({
         'token': token.key,
+        'id': participant.id if participant else None,
         'username': user.username,
         'nome': user.get_full_name(),
         'avatar': getattr(participant, 'avatar', None),
@@ -100,6 +101,7 @@ class ParticipantViewSet(ViewSet):
 
                 response = Response({
                     'token': token.key,
+                    'id': participant.id,
                     'username': user.username,
                     'nome': user.get_full_name(),
                     'avatar': participant.avatar,

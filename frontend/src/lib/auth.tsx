@@ -58,11 +58,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const res = await api({ baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL }).post<{
           token: string;
+          id: number;
           username: string;
           nome: string;
           avatar?: string | null;
         }>("/auth/login/", input);
-        persist(res.token, { username: res.username, nome: res.nome, avatar: res.avatar ?? null });
+        persist(res.token, { id: res.id, username: res.username, nome: res.nome, avatar: res.avatar ?? null });
       } finally {
         setStatus("idle");
       }
@@ -76,11 +77,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const res = await api({ baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL }).post<{
           token: string;
+          id: number;
           username: string;
           nome: string;
           avatar?: string | null;
         }>("/participant/", input);
-        persist(res.token, { username: res.username, nome: res.nome, avatar: res.avatar ?? null });
+        persist(res.token, { id: res.id, username: res.username, nome: res.nome, avatar: res.avatar ?? null });
       } finally {
         setStatus("idle");
       }
@@ -91,8 +93,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const requireAuth = useCallback(async () => {
     if (!token) return;
     try {
-      const me = await client.get<{ username: string; nome: string; avatar?: string | null }>("/auth/me/");
-      setUser({ username: me.username, nome: me.nome, avatar: me.avatar ?? null });
+      const me = await client.get<{ id: number; username: string; nome: string; avatar?: string | null }>("/auth/me/");
+      setUser({ id: me.id, username: me.username, nome: me.nome, avatar: me.avatar ?? null });
     } catch {
       logout();
     }
