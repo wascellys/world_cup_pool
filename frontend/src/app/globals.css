@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --duo-bg: #f1f5f9;
+  --duo-bg-gradient: linear-gradient(160deg, #f8fafc 0%, #e2e8f0 45%, #f1f5f9 100%);
+  --duo-card: rgba(255, 255, 255, 0.92);
+  --duo-border: #e2e8f0;
+  --duo-ink: #0f172a;
+  --duo-muted: #64748b;
+  --duo-accent: #22c55e;
+  --duo-shadow: 0 10px 40px -12px rgba(15, 23, 42, 0.12);
+  --duo-shadow-sm: 0 4px 14px -4px rgba(15, 23, 42, 0.1);
+}
+
+.dark {
+  color-scheme: dark;
+  --duo-bg: #0b1120;
+  --duo-bg-gradient: linear-gradient(160deg, #0f172a 0%, #1e1b4b 40%, #0b1120 100%);
+  --duo-card: rgba(30, 41, 59, 0.85);
+  --duo-border: #334155;
+  --duo-ink: #f1f5f9;
+  --duo-muted: #94a3b8;
+  --duo-accent: #4ade80;
+  --duo-shadow: 0 10px 40px -12px rgba(0, 0, 0, 0.45);
+  --duo-shadow-sm: 0 4px 14px -4px rgba(0, 0, 0, 0.35);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--duo-bg);
+  background-image: var(--duo-bg-gradient);
+  background-attachment: fixed;
+  color: var(--duo-ink);
+}
+
+@layer components {
+  .duo-card {
+    @apply rounded-duo border border-duo-border bg-duo-card shadow-duoSm backdrop-blur-md;
+  }
+
+  .duo-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-duo px-5 py-3 font-bold tracking-tight transition;
+    @apply border border-transparent shadow-duoSm active:translate-y-px active:shadow-none;
+  }
+
+  .duo-btn-primary {
+    @apply duo-btn bg-duo-green text-white;
+    @apply hover:bg-duo-greenDark hover:shadow-glow;
+  }
+
+  .duo-btn-secondary {
+    @apply duo-btn bg-duo-card text-duo-ink border-duo-border;
+    @apply hover:border-duo-green/30;
+  }
+
+  .duo-input {
+    @apply w-full rounded-duo border border-duo-border bg-duo-card px-4 py-3 text-duo-ink outline-none;
+    @apply placeholder:text-duo-muted focus:border-duo-green focus:ring-2 focus:ring-duo-green/20;
+  }
+
+  .duo-score-input {
+    @apply text-center tabular-nums;
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
+  .duo-score-input::-webkit-outer-spin-button,
+  .duo-score-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .text-muted {
+    color: var(--duo-muted);
+  }
+
+  .toast-enter {
+    animation: toast-in 0.35s cubic-bezier(0.21, 1.02, 0.73, 1) forwards;
+  }
+}
+
+@layer utilities {
+  .shadow-glow {
+    box-shadow: 0 0 24px rgba(34, 197, 94, 0.15);
+  }
+}
