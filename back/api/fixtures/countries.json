@@ -1,290 +1,50 @@
 [
-  {
-    "model": "api.country",
-    "pk": 1,
-    "fields": {
-      "name": "Catar",
-      "code": "QAT",
-      "image": "https://countryflagsapi.com/svg/QAT"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 2,
-    "fields": {
-      "name": "Equador",
-      "code": "ECU",
-      "image": "https://countryflagsapi.com/svg/ECU"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 3,
-    "fields": {
-      "name": "Senegal",
-      "code": "SEN",
-      "image": "https://countryflagsapi.com/svg/SEN"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 4,
-    "fields": {
-      "name": "Países Baixos",
-      "code": "NLD",
-      "image": "https://countryflagsapi.com/svg/NLD"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 5,
-    "fields": {
-      "name": "Inglaterra",
-      "code": "GBR",
-      "image": "https://countryflagsapi.com/svg/GBR"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 6,
-    "fields": {
-      "name": "Irã",
-      "code": "IRN",
-      "image": "https://countryflagsapi.com/svg/IRN"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 7,
-    "fields": {
-      "name": "Estados Unidos",
-      "code": "USA",
-      "image": "https://countryflagsapi.com/svg/USA"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 8,
-    "fields": {
-      "name": "País de Gales",
-      "code": "WLS",
-      "image": "https://countryflagsapi.com/svg/WLS"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 9,
-    "fields": {
-      "name": "Argentina",
-      "code": "ARG",
-      "image": "https://countryflagsapi.com/svg/ARG"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 10,
-    "fields": {
-      "name": "Arábia Saudita",
-      "code": "SAU",
-      "image": "https://countryflagsapi.com/svg/SAU"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 11,
-    "fields": {
-      "name": "México",
-      "code": "MEX",
-      "image": "https://countryflagsapi.com/svg/MEX"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 12,
-    "fields": {
-      "name": "Polônia",
-      "code": "POL",
-      "image": "https://countryflagsapi.com/svg/POL"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 13,
-    "fields": {
-      "name": "França",
-      "code": "FRA",
-      "image": "https://countryflagsapi.com/svg/FRA"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 14,
-    "fields": {
-      "name": "Austrália",
-      "code": "AUS",
-      "image": "https://countryflagsapi.com/svg/AUS"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 15,
-    "fields": {
-      "name": "Dinamarca",
-      "code": "DNK",
-      "image": "https://countryflagsapi.com/svg/DNK"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 16,
-    "fields": {
-      "name": "Tunísia",
-      "code": "TUN",
-      "image": "https://countryflagsapi.com/svg/TUN"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 17,
-    "fields": {
-      "name": "Espanha",
-      "code": "ESP",
-      "image": "https://countryflagsapi.com/svg/ESP"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 18,
-    "fields": {
-      "name": "Costa Rica",
-      "code": "CRI",
-      "image": "https://countryflagsapi.com/svg/CRI"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 19,
-    "fields": {
-      "name": "Alemanha",
-      "code": "DEU",
-      "image": "https://countryflagsapi.com/svg/DEU"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 20,
-    "fields": {
-      "name": "Japão",
-      "code": "JPN",
-      "image": "https://countryflagsapi.com/svg/JPN"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 21,
-    "fields": {
-      "name": "Bélgica",
-      "code": "BEL",
-      "image": "https://countryflagsapi.com/svg/BEL"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 22,
-    "fields": {
-      "name": "Canadá",
-      "code": "CAN",
-      "image": "https://countryflagsapi.com/svg/CAN"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 23,
-    "fields": {
-      "name": "Marrocos",
-      "code": "MAR",
-      "image": "https://countryflagsapi.com/svg/MAR"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 24,
-    "fields": {
-      "name": "Croácia",
-      "code": "HRV",
-      "image": "https://countryflagsapi.com/svg/HRV"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 25,
-    "fields": {
-      "name": "Brasil",
-      "code": "BRA",
-      "image": "https://countryflagsapi.com/svg/BRA"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 26,
-    "fields": {
-      "name": "Sérvia",
-      "code": "SRB",
-      "image": "https://countryflagsapi.com/svg/SRB"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 27,
-    "fields": {
-      "name": "Suíça",
-      "code": "CHE",
-      "image": "https://countryflagsapi.com/svg/CHE"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 28,
-    "fields": {
-      "name": "Camarões",
-      "code": "CMR",
-      "image": "https://countryflagsapi.com/svg/CMR"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 29,
-    "fields": {
-      "name": "Portugal",
-      "code": "PRT",
-      "image": "https://countryflagsapi.com/svg/PRT"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 30,
-    "fields": {
-      "name": "Gana",
-      "code": "GHA",
-      "image": "https://countryflagsapi.com/svg/GHA"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 31,
-    "fields": {
-      "name": "Uruguai",
-      "code": "URY",
-      "image": "https://countryflagsapi.com/svg/URY"
-    }
-  },
-  {
-    "model": "api.country",
-    "pk": 32,
-    "fields": {
-      "name": "Coreia do Sul",
-      "code": "KOR",
-      "image": "https://countryflagsapi.com/svg/KOR"
-    }
-  }
+  {"model": "api.country", "pk": 1, "fields": {"name": "Canadá", "code": "CAN", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/CAN"}},
+  {"model": "api.country", "pk": 2, "fields": {"name": "Estados Unidos", "code": "USA", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/USA"}},
+  {"model": "api.country", "pk": 3, "fields": {"name": "México", "code": "MEX", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/MEX"}},
+  {"model": "api.country", "pk": 4, "fields": {"name": "Arábia Saudita", "code": "KSA", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/KSA"}},
+  {"model": "api.country", "pk": 5, "fields": {"name": "Austrália", "code": "AUS", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/AUS"}},
+  {"model": "api.country", "pk": 6, "fields": {"name": "Catar", "code": "QAT", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/QAT"}},
+  {"model": "api.country", "pk": 7, "fields": {"name": "Coreia do Sul", "code": "KOR", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/KOR"}},
+  {"model": "api.country", "pk": 8, "fields": {"name": "Irã", "code": "IRN", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/IRN"}},
+  {"model": "api.country", "pk": 9, "fields": {"name": "Japão", "code": "JPN", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/JPN"}},
+  {"model": "api.country", "pk": 10, "fields": {"name": "Iraque", "code": "IRQ", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/IRQ"}},
+  {"model": "api.country", "pk": 11, "fields": {"name": "Jordânia", "code": "JOR", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/JOR"}},
+  {"model": "api.country", "pk": 12, "fields": {"name": "Uzbequistão", "code": "UZB", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/UZB"}},
+  {"model": "api.country", "pk": 13, "fields": {"name": "África do Sul", "code": "RSA", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/RSA"}},
+  {"model": "api.country", "pk": 14, "fields": {"name": "Argélia", "code": "ALG", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/ALG"}},
+  {"model": "api.country", "pk": 15, "fields": {"name": "Cabo Verde", "code": "CPV", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/CPV"}},
+  {"model": "api.country", "pk": 16, "fields": {"name": "Costa do Marfim", "code": "CIV", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/CIV"}},
+  {"model": "api.country", "pk": 17, "fields": {"name": "Egito", "code": "EGY", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/EGY"}},
+  {"model": "api.country", "pk": 18, "fields": {"name": "Gana", "code": "GHA", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/GHA"}},
+  {"model": "api.country", "pk": 19, "fields": {"name": "Marrocos", "code": "MAR", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/MAR"}},
+  {"model": "api.country", "pk": 20, "fields": {"name": "RD do Congo", "code": "COD", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/COD"}},
+  {"model": "api.country", "pk": 21, "fields": {"name": "Senegal", "code": "SEN", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/SEN"}},
+  {"model": "api.country", "pk": 22, "fields": {"name": "Tunísia", "code": "TUN", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/TUN"}},
+  {"model": "api.country", "pk": 23, "fields": {"name": "Argentina", "code": "ARG", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/ARG"}},
+  {"model": "api.country", "pk": 24, "fields": {"name": "Brasil", "code": "BRA", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/BRA"}},
+  {"model": "api.country", "pk": 25, "fields": {"name": "Colômbia", "code": "COL", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/COL"}},
+  {"model": "api.country", "pk": 26, "fields": {"name": "Equador", "code": "ECU", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/ECU"}},
+  {"model": "api.country", "pk": 27, "fields": {"name": "Paraguai", "code": "PAR", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/PAR"}},
+  {"model": "api.country", "pk": 28, "fields": {"name": "Uruguai", "code": "URU", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/URU"}},
+  {"model": "api.country", "pk": 29, "fields": {"name": "Nova Zelândia", "code": "NZL", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/NZL"}},
+  {"model": "api.country", "pk": 30, "fields": {"name": "Alemanha", "code": "GER", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/GER"}},
+  {"model": "api.country", "pk": 31, "fields": {"name": "Áustria", "code": "AUT", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/AUT"}},
+  {"model": "api.country", "pk": 32, "fields": {"name": "Bélgica", "code": "BEL", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/BEL"}},
+  {"model": "api.country", "pk": 33, "fields": {"name": "Bósnia e Herzegovina", "code": "BIH", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/BIH"}},
+  {"model": "api.country", "pk": 34, "fields": {"name": "Croácia", "code": "CRO", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/CRO"}},
+  {"model": "api.country", "pk": 35, "fields": {"name": "Escócia", "code": "SCO", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/SCO"}},
+  {"model": "api.country", "pk": 36, "fields": {"name": "Espanha", "code": "ESP", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/ESP"}},
+  {"model": "api.country", "pk": 37, "fields": {"name": "França", "code": "FRA", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/FRA"}},
+  {"model": "api.country", "pk": 38, "fields": {"name": "Holanda", "code": "NED", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/NED"}},
+  {"model": "api.country", "pk": 39, "fields": {"name": "Inglaterra", "code": "ENG", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/ENG"}},
+  {"model": "api.country", "pk": 40, "fields": {"name": "Noruega", "code": "NOR", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/NOR"}},
+  {"model": "api.country", "pk": 41, "fields": {"name": "Portugal", "code": "POR", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/POR"}},
+  {"model": "api.country", "pk": 42, "fields": {"name": "República Tcheca", "code": "CZE", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/CZE"}},
+  {"model": "api.country", "pk": 43, "fields": {"name": "Suécia", "code": "SWE", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/SWE"}},
+  {"model": "api.country", "pk": 44, "fields": {"name": "Suíça", "code": "SUI", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/SUI"}},
+  {"model": "api.country", "pk": 45, "fields": {"name": "Turquia", "code": "TUR", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/TUR"}},
+  {"model": "api.country", "pk": 46, "fields": {"name": "Curaçao", "code": "CUW", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/CUW"}},
+  {"model": "api.country", "pk": 47, "fields": {"name": "Haiti", "code": "HAI", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/HAI"}},
+  {"model": "api.country", "pk": 48, "fields": {"name": "Panamá", "code": "PAN", "image": "https://api.fifa.com/api/v3/picture/flags-sq-4/PAN"}}
 ]
