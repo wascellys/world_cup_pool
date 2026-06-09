@@ -5,9 +5,9 @@ services:
     image: postgres:15
     restart: unless-stopped
     environment:
-      POSTGRES_DB: world_cup_pool
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_DB:-world_cup_pool}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
@@ -18,10 +18,18 @@ services:
       context: ./back
     command: ./entrypoint.sh
     environment:
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/world_cup_pool
-      DJANGO_DEBUG: '1'
-      DJANGO_ALLOWED_HOSTS: 'localhost,127.0.0.1'
-      DJANGO_SECRET_KEY: 'django-insecure-local'
+      DATABASE_URL: ${DATABASE_URL:-}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-django-insecure-local}
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-True}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1}
+      DJANGO_CORS_ALLOW_ALL_ORIGINS: ${DJANGO_CORS_ALLOW_ALL_ORIGINS:-False}
+      DJANGO_CORS_ALLOWED_ORIGINS: ${DJANGO_CORS_ALLOWED_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+      DJANGO_CSRF_TRUSTED_ORIGINS: ${DJANGO_CSRF_TRUSTED_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+      POSTGRES_DB: ${POSTGRES_DB:-world_cup_pool}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
     ports:
       - '8000:8000'
     depends_on:
@@ -32,6 +40,10 @@ services:
   frontend:
     build:
       context: ./frontend
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000/api}
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000/api}
     ports:
       - '3000:3000'
     depends_on:
