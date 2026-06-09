@@ -1,8 +1,7 @@
-from datetime import datetime
-
 import shortuuid
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 
 
 def pool_code_default():
@@ -29,7 +28,7 @@ class Country(models.Model):
 class Pool(models.Model):
     name = models.CharField(max_length=100)
     cod = models.CharField(max_length=100, default=pool_code_default)
-    created_at = models.DateTimeField(default=datetime.now)
+    created_at = models.DateTimeField(default=timezone.now)
     correct_score = models.CharField(max_length=10)
     result_score = models.CharField(max_length=10)
     owner = models.ForeignKey(Participant, on_delete=models.CASCADE)
@@ -50,7 +49,7 @@ class ParticipantPool(models.Model):
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE)
     pool = models.ForeignKey(Pool, on_delete=models.CASCADE)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
-    created_at = models.DateTimeField(default=datetime.now)
+    created_at = models.DateTimeField(default=timezone.now)
     approved_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:

@@ -272,6 +272,14 @@ export default function PoolGamesPage() {
     () => Array.from(gamesByDay.entries()).sort(([a], [b]) => a.localeCompare(b)),
     [gamesByDay],
   );
+  const completedParticipantHistory = useMemo(
+    () =>
+      participantHistory.filter((guess) => {
+        const game = games.find((currentGame) => currentGame.id === guess.game);
+        return game ? hasGameResult(game) : false;
+      }),
+    [games, participantHistory],
+  );
 
   if (!token) {
     return (
@@ -569,11 +577,11 @@ export default function PoolGamesPage() {
                 <h4 className="font-bold">Histórico de palpites</h4>
                 {loadingHistory ? (
                   <p className="text-sm text-muted">Carregando...</p>
-                ) : participantHistory.length === 0 ? (
-                  <p className="mt-3 text-sm text-muted">Nenhum palpite encontrado para este participante.</p>
+                ) : completedParticipantHistory.length === 0 ? (
+                  <p className="mt-3 text-sm text-muted">Nenhum palpite de jogo encerrado encontrado para este participante.</p>
                 ) : (
                   <div className="mt-3 space-y-3">
-                    {participantHistory.map((g) => {
+                    {completedParticipantHistory.map((g) => {
                       const game = games.find((gg) => gg.id === g.game) as Game | undefined;
                       return (
                         <div key={g.id} className="rounded-duo border border-duo-border bg-duo-card/60 px-4 py-3">
@@ -896,34 +904,37 @@ function OpenGameCard({
   onDraftChange: Dispatch<SetStateAction<Record<number, GuessDraft>>>;
 }) {
   return (
-    <article className="rounded-duo border border-duo-border bg-duo-card/80 px-4 py-4">
-      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted">
-        <span>{formatTime(game.date_game)}</span>
-        {game.city ? (
-          <>
-            <span>·</span>
-            <span>{game.city}</span>
-          </>
-        ) : null}
-        {game.round ? (
-          <>
-            <span>·</span>
-            <span>{game.round}</span>
-          </>
-        ) : null}
-        <span>·</span>
-
+    <article className="rounded-duo border border-duo-border bg-duo-card/80 px-4 py-5 text-center">
+      <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-5">
+        <TeamSide name={game.first_team.name} code={game.first_team.code} align="right" />
+        <span className="text-2xl font-extrabold tabular-nums text-duo-ink sm:text-3xl">
+          {formatTime(game.date_game)}
+        </span>
+        <TeamSide name={game.second_team.name} code={game.second_team.code} align="left" />
       </div>
 
-      <div className="mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-3">
-        <TeamSide name={game.first_team.name} code={game.first_team.code} align="left" />
-        <GuessInputs gameId={game.id} draft={draft} onDraftChange={onDraftChange} />
-        <TeamSide name={game.second_team.name} code={game.second_team.code} align="right" />
+      <div className="mt-3 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs font-medium text-muted">
+        {game.round ? <span>{game.round}</span> : null}
+        {game.round && (game.stadium || game.city) ? <span>·</span> : null}
+        {game.stadium ? <span>{game.stadium}</span> : null}
+        {game.stadium && game.city ? <span>·</span> : null}
+        {game.city ? <span>{game.city}</span> : null}
       </div>
 
-      {game.guessed ? (
-        <p className="mt-2 text-xs text-muted">Os palpites encerram às {formatTime(game.date_closing_game)}.</p>
-      ) : null}
+      <div className="mt-4 border-t border-duo-border/70 pt-3 text-center">
+        <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
+          <div className="text-center sm:text-left">
+            <p className="text-xs font-bold text-muted">Seu palpite</p>
+            <div className="mt-1">
+              <GuessInputs gameId={game.id} draft={draft} onDraftChange={onDraftChange} />
+            </div>
+          </div>
+          <div className="text-center sm:text-right">
+            <p className="text-xs font-bold text-muted">Os palpites encerram às</p>
+            <p className="mt-1 text-base font-extrabold tabular-nums text-duo-ink">{formatTime(game.date_closing_game)}</p>
+          </div>
+        </div>
+      </div>
     </article>
   );
 }
@@ -946,25 +957,16 @@ function TeamSide({ name, code, align }: { name: string; code?: string | null; a
       alt={name}
       title={name}
       onError={handleImgError}
-      className="h-10 w-10 shrink-0 rounded-full object-cover"
+      className="h-7 w-7 shrink-0 rounded-sm object-cover"
     />
   ) : (
-    <div className="h-10 w-10 shrink-0 rounded-full bg-duo-border flex items-center justify-center font-bold text-sm">{name.split(" ").map(s=>s[0]).slice(0,2).join("")}</div>
+    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm bg-duo-border text-xs font-bold">{name.split(" ").map(s=>s[0]).slice(0,2).join("")}</div>
   );
 
   return (
-    <div className={`flex items-center gap-2.5 ${align === "right" ? "justify-end" : "justify-start"}`}>
-      {align === "left" ? (
-        <>
-          {imgEl}
-          <span className="hidden font-bold text-sm min-[550px]:inline">{name}</span>
-        </>
-      ) : (
-        <>
-          <span className="hidden font-bold text-sm min-[550px]:inline">{name}</span>
-          {imgEl}
-        </>
-      )}
+    <div className={`flex min-w-0 items-center gap-2 ${align === "right" ? "justify-end" : "justify-start"}`}>
+      <span className="min-w-0 text-base font-bold text-duo-ink sm:text-lg">{name}</span>
+      {imgEl}
     </div>
   );
 }
@@ -1018,6 +1020,14 @@ function GuessInputs({
 
 function isGameClosed(game: Game, now: number) {
   return now >= new Date(game.date_closing_game).getTime();
+}
+
+function hasGameResult(game: Game) {
+  return hasScoreValue(game.score_first_team) || hasScoreValue(game.score_second_team);
+}
+
+function hasScoreValue(value: string | null | undefined) {
+  return value != null && String(value).trim() !== "";
 }
 
 function buildDraftForGame(game: Game): GuessDraft {
@@ -1115,3 +1125,4 @@ function calculateRankingByPeriod(
 
   return periodRanking;
 }
+
