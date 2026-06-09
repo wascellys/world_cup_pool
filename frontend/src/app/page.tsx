@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { Logo } from "@/components/Logo";
-import cup from "@/assets/sh.png";
+import cup from "@/assets/FIFA-2026.png";
 
 export default function HomePage() {
   return (
@@ -13,15 +13,15 @@ export default function HomePage() {
             <div>
               <h1 className="text-2xl font-extrabold">Bolão da Copa do Mundo</h1>
             </div>
-            
+
           </div>
 
           <div className="mt-6 grid gap-3">
             <div className="flex items-center justify-center">
               <img
+                style={{ height: "300px" }}
                 src={cup.src}
                 alt="Ícone de bola de futebol"
-                className="h-20 animate-bounce"
               />
             </div>
             <Link className="duo-btn-primary w-full" href="/login">
