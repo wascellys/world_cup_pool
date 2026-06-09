@@ -3,7 +3,7 @@
     "model": "api.country",
     "pk": 1,
     "fields": {
-      "name": "Qatar",
+      "name": "Catar",
       "code": "QAT",
       "image": "https://countryflagsapi.com/svg/QAT"
     }
@@ -12,7 +12,7 @@
     "model": "api.country",
     "pk": 2,
     "fields": {
-      "name": "Ecuador",
+      "name": "Equador",
       "code": "ECU",
       "image": "https://countryflagsapi.com/svg/ECU"
     }
@@ -30,7 +30,7 @@
     "model": "api.country",
     "pk": 4,
     "fields": {
-      "name": "Netherlands",
+      "name": "Países Baixos",
       "code": "NLD",
       "image": "https://countryflagsapi.com/svg/NLD"
     }
@@ -39,7 +39,7 @@
     "model": "api.country",
     "pk": 5,
     "fields": {
-      "name": "England",
+      "name": "Inglaterra",
       "code": "GBR",
       "image": "https://countryflagsapi.com/svg/GBR"
     }
@@ -48,7 +48,7 @@
     "model": "api.country",
     "pk": 6,
     "fields": {
-      "name": "Iran",
+      "name": "Irã",
       "code": "IRN",
       "image": "https://countryflagsapi.com/svg/IRN"
     }
@@ -57,7 +57,7 @@
     "model": "api.country",
     "pk": 7,
     "fields": {
-      "name": "United States",
+      "name": "Estados Unidos",
       "code": "USA",
       "image": "https://countryflagsapi.com/svg/USA"
     }
@@ -66,7 +66,7 @@
     "model": "api.country",
     "pk": 8,
     "fields": {
-      "name": "Wales",
+      "name": "País de Gales",
       "code": "WLS",
       "image": "https://countryflagsapi.com/svg/WLS"
     }
@@ -84,7 +84,7 @@
     "model": "api.country",
     "pk": 10,
     "fields": {
-      "name": "Saudi Arabia",
+      "name": "Arábia Saudita",
       "code": "SAU",
       "image": "https://countryflagsapi.com/svg/SAU"
     }
@@ -93,7 +93,7 @@
     "model": "api.country",
     "pk": 11,
     "fields": {
-      "name": "Mexico",
+      "name": "México",
       "code": "MEX",
       "image": "https://countryflagsapi.com/svg/MEX"
     }
@@ -102,7 +102,7 @@
     "model": "api.country",
     "pk": 12,
     "fields": {
-      "name": "Poland",
+      "name": "Polônia",
       "code": "POL",
       "image": "https://countryflagsapi.com/svg/POL"
     }
@@ -111,7 +111,7 @@
     "model": "api.country",
     "pk": 13,
     "fields": {
-      "name": "France",
+      "name": "França",
       "code": "FRA",
       "image": "https://countryflagsapi.com/svg/FRA"
     }
@@ -120,7 +120,7 @@
     "model": "api.country",
     "pk": 14,
     "fields": {
-      "name": "Australia",
+      "name": "Austrália",
       "code": "AUS",
       "image": "https://countryflagsapi.com/svg/AUS"
     }
@@ -129,7 +129,7 @@
     "model": "api.country",
     "pk": 15,
     "fields": {
-      "name": "Denmark",
+      "name": "Dinamarca",
       "code": "DNK",
       "image": "https://countryflagsapi.com/svg/DNK"
     }
@@ -138,7 +138,7 @@
     "model": "api.country",
     "pk": 16,
     "fields": {
-      "name": "Tunisia",
+      "name": "Tunísia",
       "code": "TUN",
       "image": "https://countryflagsapi.com/svg/TUN"
     }
@@ -147,7 +147,7 @@
     "model": "api.country",
     "pk": 17,
     "fields": {
-      "name": "Spain",
+      "name": "Espanha",
       "code": "ESP",
       "image": "https://countryflagsapi.com/svg/ESP"
     }
@@ -165,7 +165,7 @@
     "model": "api.country",
     "pk": 19,
     "fields": {
-      "name": "Germany",
+      "name": "Alemanha",
       "code": "DEU",
       "image": "https://countryflagsapi.com/svg/DEU"
     }
@@ -174,7 +174,7 @@
     "model": "api.country",
     "pk": 20,
     "fields": {
-      "name": "Japan",
+      "name": "Japão",
       "code": "JPN",
       "image": "https://countryflagsapi.com/svg/JPN"
     }
@@ -183,7 +183,7 @@
     "model": "api.country",
     "pk": 21,
     "fields": {
-      "name": "Belgium",
+      "name": "Bélgica",
       "code": "BEL",
       "image": "https://countryflagsapi.com/svg/BEL"
     }
@@ -192,7 +192,7 @@
     "model": "api.country",
     "pk": 22,
     "fields": {
-      "name": "Canada",
+      "name": "Canadá",
       "code": "CAN",
       "image": "https://countryflagsapi.com/svg/CAN"
     }
@@ -201,7 +201,7 @@
     "model": "api.country",
     "pk": 23,
     "fields": {
-      "name": "Morocco",
+      "name": "Marrocos",
       "code": "MAR",
       "image": "https://countryflagsapi.com/svg/MAR"
     }
@@ -210,7 +210,7 @@
     "model": "api.country",
     "pk": 24,
     "fields": {
-      "name": "Croatia",
+      "name": "Croácia",
       "code": "HRV",
       "image": "https://countryflagsapi.com/svg/HRV"
     }
@@ -219,7 +219,7 @@
     "model": "api.country",
     "pk": 25,
     "fields": {
-      "name": "Brazil",
+      "name": "Brasil",
       "code": "BRA",
       "image": "https://countryflagsapi.com/svg/BRA"
     }
@@ -228,7 +228,7 @@
     "model": "api.country",
     "pk": 26,
     "fields": {
-      "name": "Serbia",
+      "name": "Sérvia",
       "code": "SRB",
       "image": "https://countryflagsapi.com/svg/SRB"
     }
@@ -237,7 +237,7 @@
     "model": "api.country",
     "pk": 27,
     "fields": {
-      "name": "Switzerland",
+      "name": "Suíça",
       "code": "CHE",
       "image": "https://countryflagsapi.com/svg/CHE"
     }
@@ -246,7 +246,7 @@
     "model": "api.country",
     "pk": 28,
     "fields": {
-      "name": "Cameroon",
+      "name": "Camarões",
       "code": "CMR",
       "image": "https://countryflagsapi.com/svg/CMR"
     }
@@ -264,7 +264,7 @@
     "model": "api.country",
     "pk": 30,
     "fields": {
-      "name": "Ghana",
+      "name": "Gana",
       "code": "GHA",
       "image": "https://countryflagsapi.com/svg/GHA"
     }
@@ -273,7 +273,7 @@
     "model": "api.country",
     "pk": 31,
     "fields": {
-      "name": "Uruguay",
+      "name": "Uruguai",
       "code": "URY",
       "image": "https://countryflagsapi.com/svg/URY"
     }
@@ -282,7 +282,7 @@
     "model": "api.country",
     "pk": 32,
     "fields": {
-      "name": "South Korea",
+      "name": "Coreia do Sul",
       "code": "KOR",
       "image": "https://countryflagsapi.com/svg/KOR"
     }
