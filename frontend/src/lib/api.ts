@@ -17,7 +17,11 @@ class ApiError extends Error {
 }
 
 export function api({ baseUrl, token }: ApiClientOptions) {
-  const resolvedBaseUrl = (baseUrl ?? process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api").replace(/\/$/, "");
+  const resolvedBaseUrl = (
+    baseUrl ??
+    process.env.NEXT_PUBLIC_API_BASE_URL ??
+    "https://back-production-685e.up.railway.app/api"
+  ).replace(/\/$/, "");
 
   async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
     const headers: Record<string, string> = {

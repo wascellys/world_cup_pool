@@ -3,7 +3,7 @@ FROM node:20-alpine
 WORKDIR /app
 
 ENV PORT=3000
-ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api
+ARG NEXT_PUBLIC_API_BASE_URL=https://back-production-685e.up.railway.app/api
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 
 COPY package*.json ./
