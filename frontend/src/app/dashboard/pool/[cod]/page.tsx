@@ -308,7 +308,7 @@ export default function PoolGamesPage() {
         <div className="mx-auto w-full max-w-xl">
           <div className="duo-card p-6">
             <h1 className="text-2xl font-extrabold">Você precisa entrar</h1>
-            <p className="mt-1 text-sm text-muted">A tela de jogos usa endpoints protegidos por token.</p>
+            {/* <p className="mt-1 text-sm text-muted">A tela de jogos usa endpoints protegidos por token.</p> */}
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               <Link className="duo-btn-primary" href="/login">
                 Entrar
