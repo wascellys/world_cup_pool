@@ -389,7 +389,7 @@ class GameViewSet(ModelViewSet):
             if not ParticipantPool.objects.filter(pool=pool, participant=participant, status='approved').exists():
                 return Response({'message': 'you are not participating in this pool'}, status=status.HTTP_403_FORBIDDEN)
 
-        queryset = self.queryset
+        queryset = self.get_queryset()
         try:
             serializers = self.serializer_class(queryset, many=True)
             for data in serializers.data:
@@ -423,7 +423,7 @@ class ParticipantPoolViewSet(ModelViewSet):
         if not participante:
             return Response({'message': 'Participant not found for current user'}, status=status.HTTP_404_NOT_FOUND)
 
-        queryset = self.queryset.filter(participant=participante)
+        queryset = self.get_queryset().filter(participant=participante)
         try:
             serializers = self.serializer_class(queryset, many=True)
             return Response({'data': serializers.data}, status=status.HTTP_200_OK)
