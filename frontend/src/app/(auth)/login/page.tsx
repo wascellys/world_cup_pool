@@ -35,12 +35,12 @@ export default function LoginPage() {
             {/* <Logo /> */}
             <div>
               <h1 className="text-2xl font-extrabold">Entrar</h1>
-              <p className="text-sm text-muted">Use seu username e senha.</p>
+              <p className="text-sm text-muted">Use seu login e senha.</p>
             </div>
           </div>
 
           <form className="mt-6 grid gap-4" onSubmit={onSubmit}>
-            <Field label="Username">
+            <Field label="Login">
               <input
                 className="duo-input"
                 value={username}
