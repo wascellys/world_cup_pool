@@ -306,9 +306,9 @@ function CreatePoolPanel({ onCreated }: { onCreated: () => Promise<void> }) {
           </Field>
         </div>
 
-        <Field label="Avatar (opcional)">
+        {/* <Field label="Avatar (opcional)">
           <input className="duo-input" value={avatar} onChange={(e) => setAvatar(e.target.value)} />
-        </Field>
+        </Field> */}
 
         <Field label="Tipo do bolão">
           <div className="flex gap-3">

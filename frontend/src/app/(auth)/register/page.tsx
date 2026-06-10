@@ -67,9 +67,9 @@ export default function RegisterPage() {
               />
             </Field>
 
-            <Field label="Avatar (opcional)">
+            {/* <Field label="Avatar (opcional)">
               <input className="duo-input" value={avatar} onChange={(e) => setAvatar(e.target.value)} />
-            </Field>
+            </Field> */}
 
             <button className="duo-btn-primary w-full" disabled={status === "loading"}>
               {status === "loading" ? "Criando..." : "Criar conta"}
