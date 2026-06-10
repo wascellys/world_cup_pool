@@ -19,6 +19,8 @@ type TabId = "games" | "participants" | "ranking";
 type GamesSection = "today" | "all";
 type ParticipantsSection = "all" | "requests";
 
+const APP_TIME_ZONE = "America/Sao_Paulo";
+
 export default function PoolGamesPage() {
   const params = useParams();
   const cod = String(params.cod ?? "");
@@ -226,9 +228,9 @@ export default function PoolGamesPage() {
     setPeriodEndDate(date);
   }
 
-  const gamesByDay = useMemo(() => groupGamesByDay(games), [games]);
+  const allGamesByDay = useMemo(() => groupGamesByDay(games), [games]);
   const todayKey = getLocalDateKey(new Date(now));
-  const todayGames = gamesByDay.get(todayKey) ?? [];
+  const todayGames = allGamesByDay.get(todayKey) ?? [];
 
   const sortedParticipants = useMemo(() => {
     return participants.slice().sort((a, b) => {
@@ -268,9 +270,18 @@ export default function PoolGamesPage() {
     setParticipantHistory([]);
   }
 
-  const sortedDayEntries = useMemo(
-    () => Array.from(gamesByDay.entries()).sort(([a], [b]) => a.localeCompare(b)),
-    [gamesByDay],
+  async function handleCopyCode() {
+    try {
+      await navigator.clipboard.writeText(cod);
+      toast.success("Código copiado!");
+    } catch (err) {
+      toast.error("Não foi possível copiar o código.");
+    }
+  }
+
+  const allGameDayEntries = useMemo(
+    () => Array.from(allGamesByDay.entries()).sort(([a], [b]) => a.localeCompare(b)),
+    [allGamesByDay],
   );
   const completedParticipantHistory = useMemo(
     () =>
@@ -309,7 +320,15 @@ export default function PoolGamesPage() {
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
               <h1 className="truncate text-2xl font-extrabold">{pool?.name ?? "Bolão"}</h1>
-              <p className="mt-0.5 text-sm text-muted">Código: {cod}</p>
+              <button
+                type="button"
+                onClick={() => void handleCopyCode()}
+                className="mt-0.5 inline-flex items-center gap-1 text-sm text-muted transition hover:text-duo-greenDark"
+                title="Copiar código"
+              >
+                <span>Código:</span>
+                <span className="font-extrabold tracking-wide text-duo-ink">{cod}</span>
+              </button>
             </div>
             <Link className="duo-btn-secondary shrink-0" href="/dashboard">
               Voltar
@@ -534,7 +553,7 @@ export default function PoolGamesPage() {
                   </div>
                 ) : (
                   <div className="grid gap-4">
-                    {sortedDayEntries.map(([dayKey, dayGames]) => (
+                    {allGameDayEntries.map(([dayKey, dayGames]) => (
                       <GamesDayPanel
                         key={dayKey}
                         dayKey={dayKey}
@@ -1064,14 +1083,21 @@ function groupGamesByDay(games: Game[]) {
 }
 
 function getLocalDateKey(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+  const parts = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: APP_TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const year = parts.find((part) => part.type === "year")?.value ?? "0000";
+  const month = parts.find((part) => part.type === "month")?.value ?? "01";
+  const day = parts.find((part) => part.type === "day")?.value ?? "01";
   return `${year}-${month}-${day}`;
 }
 
 function formatDateLabel(date: Date, includeTodayLabel: boolean) {
   const label = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: APP_TIME_ZONE,
     weekday: "long",
     day: "2-digit",
     month: "long",
@@ -1086,19 +1112,19 @@ function formatDateLabel(date: Date, includeTodayLabel: boolean) {
 
 function formatCompactDateLabel(value: string) {
   const date = new Date(value);
-  const weekday = new Intl.DateTimeFormat("pt-BR", { weekday: "short" })
+  const weekday = new Intl.DateTimeFormat("pt-BR", { timeZone: APP_TIME_ZONE, weekday: "short" })
     .format(date)
     .replace(".", "")
     .toUpperCase();
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = date.getFullYear();
+  const key = getLocalDateKey(date);
+  const [year, month, day] = key.split("-");
 
   return `${weekday} ${day}/${month}/${year}`;
 }
 
 function formatTime(value: string) {
   return new Intl.DateTimeFormat("pt-BR", {
+    timeZone: APP_TIME_ZONE,
     hour: "2-digit",
     minute: "2-digit",
   }).format(new Date(value));
