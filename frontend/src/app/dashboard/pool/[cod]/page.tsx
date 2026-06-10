@@ -1055,8 +1055,29 @@ function GuessInputs({
 }
 
 function isGameClosed(game: Game, now: number) {
-  const closingTime = new Date(game.date_closing_game).getTime();
+  const closingTime = getEffectiveClosingTime(game);
   return Number.isFinite(closingTime) ? now >= closingTime : true;
+}
+
+function getEffectiveClosingTime(game: Game) {
+  const gameDateKey = getLocalDateKey(new Date(game.date_game));
+  const closingTimeParts = getTimePartsInAppTimeZone(new Date(game.date_closing_game));
+
+  return new Date(`${gameDateKey}T${closingTimeParts.hour}:${closingTimeParts.minute}:00-03:00`).getTime();
+}
+
+function getTimePartsInAppTimeZone(date: Date) {
+  const parts = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: APP_TIME_ZONE,
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(date);
+
+  return {
+    hour: parts.find((part) => part.type === "hour")?.value ?? "00",
+    minute: parts.find((part) => part.type === "minute")?.value ?? "00",
+  };
 }
 
 function hasGameResult(game: Game) {

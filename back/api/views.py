@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 from django.contrib.auth import authenticate
@@ -28,11 +30,23 @@ GUESSING_CLOSED_MESSAGE = 'O prazo para enviar o palpite encerrou!'
 
 
 def is_guessing_closed(game):
+    current_timezone = timezone.get_current_timezone()
+    game_time = game.date_game
     closing_time = game.date_closing_game
-    if timezone.is_naive(closing_time):
-        closing_time = timezone.make_aware(closing_time, timezone.get_current_timezone())
 
-    return timezone.localtime(timezone.now()) >= timezone.localtime(closing_time)
+    if timezone.is_naive(game_time):
+        game_time = timezone.make_aware(game_time, current_timezone)
+    if timezone.is_naive(closing_time):
+        closing_time = timezone.make_aware(closing_time, current_timezone)
+
+    local_game_time = timezone.localtime(game_time, current_timezone)
+    local_closing_time = timezone.localtime(closing_time, current_timezone)
+    effective_closing_time = timezone.make_aware(
+        datetime.combine(local_game_time.date(), local_closing_time.time()),
+        current_timezone,
+    )
+
+    return timezone.localtime(timezone.now(), current_timezone) >= effective_closing_time
 
 
 @api_view(['POST'])
