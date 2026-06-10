@@ -28,7 +28,11 @@ GUESSING_CLOSED_MESSAGE = 'O prazo para enviar o palpite encerrou!'
 
 
 def is_guessing_closed(game):
-    return timezone.now() >= game.date_closing_game
+    closing_time = game.date_closing_game
+    if timezone.is_naive(closing_time):
+        closing_time = timezone.make_aware(closing_time, timezone.get_current_timezone())
+
+    return timezone.localtime(timezone.now()) >= timezone.localtime(closing_time)
 
 
 @api_view(['POST'])

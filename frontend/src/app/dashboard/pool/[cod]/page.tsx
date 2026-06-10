@@ -51,7 +51,7 @@ export default function PoolGamesPage() {
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
-    const timer = window.setInterval(() => setNow(Date.now()), 30_000);
+    const timer = window.setInterval(() => setNow(Date.now()), 5_000);
     return () => window.clearInterval(timer);
   }, []);
 
@@ -129,9 +129,19 @@ export default function PoolGamesPage() {
     setError(null);
 
     const results: { game: Game; response?: Guess; error?: string }[] = [];
+    const currentTime = Date.now();
+    const openDayGames = dayGames.filter((game) => !isGameClosed(game, currentTime));
 
-    for (const game of dayGames) {
-      if (isGameClosed(game, now)) continue;
+    if (openDayGames.length === 0) {
+      const message = "O prazo para enviar o palpite encerrou!";
+      setError(message);
+      toast.error(message);
+      setNow(currentTime);
+      setSavingDayKey(null);
+      return;
+    }
+
+    for (const game of openDayGames) {
 
       const draft = drafts[game.id] ?? { first: "", second: "" };
       const first = draft.first.trim() === "" ? "0" : draft.first;
@@ -539,7 +549,7 @@ export default function PoolGamesPage() {
                   games={todayGames}
                   drafts={drafts}
                   onDraftChange={setDrafts}
-                  onSave={() => void handleSaveGuesses(todayKey, todayGames.filter((g) => !isGameClosed(g, now)))}
+                  onSave={() => void handleSaveGuesses(todayKey, todayGames)}
                   saving={savingDayKey === todayKey}
                   now={now}
                   emptyMessage="Nenhum jogo programado para hoje."
@@ -562,10 +572,7 @@ export default function PoolGamesPage() {
                         drafts={drafts}
                         onDraftChange={setDrafts}
                         onSave={() =>
-                          void handleSaveGuesses(
-                            dayKey,
-                            dayGames.filter((g) => !isGameClosed(g, now)),
-                          )
+                          void handleSaveGuesses(dayKey, dayGames)
                         }
                         saving={savingDayKey === dayKey}
                         now={now}
@@ -1048,7 +1055,8 @@ function GuessInputs({
 }
 
 function isGameClosed(game: Game, now: number) {
-  return now >= new Date(game.date_closing_game).getTime();
+  const closingTime = new Date(game.date_closing_game).getTime();
+  return Number.isFinite(closingTime) ? now >= closingTime : true;
 }
 
 function hasGameResult(game: Game) {
