@@ -904,42 +904,55 @@ function OpenGameCard({
   onDraftChange: Dispatch<SetStateAction<Record<number, GuessDraft>>>;
 }) {
   return (
-    <article className="rounded-duo border border-duo-border bg-duo-card/80 px-4 py-5 text-center">
-      <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-5">
-        <TeamSide name={game.first_team.name} code={game.first_team.code} align="right" />
-        <span className="text-2xl font-extrabold tabular-nums text-duo-ink sm:text-3xl">
-          {formatTime(game.date_game)}
-        </span>
-        <TeamSide name={game.second_team.name} code={game.second_team.code} align="left" />
+    <article className="border-b border-duo-border bg-duo-card/80 px-4 py-3">
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 text-[11px] font-extrabold uppercase text-muted">
+        <span className="text-left font-extrabold tabular-nums text-duo-ink text-[12px]">Grupo {game.group}</span>
+        <span className="truncate text-center">{game.stadium || game.city || "-"}</span>
+        <span className="text-right font-extrabold tabular-nums text-duo-ink text-[15px]">{formatTime(game.date_game)}</span>
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs font-medium text-muted">
-        {game.round ? <span>{game.round}</span> : null}
-        {game.round && (game.stadium || game.city) ? <span>·</span> : null}
-        {game.stadium ? <span>{game.stadium}</span> : null}
+      <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto_auto_auto_minmax(0,1fr)] items-center gap-x-1.5">
+        <CompactTeamName name={game.first_team.name} code={game.first_team.code} align="right" />
+        <FlagImage name={game.first_team.name} code={game.first_team.code} className="h-7 w-9" />
+        <GuessInputs gameId={game.id} draft={draft} onDraftChange={onDraftChange} compact />
+        <FlagImage name={game.second_team.name} code={game.second_team.code} className="h-7 w-9" />
+        <CompactTeamName name={game.second_team.name} code={game.second_team.code} align="left" />
+      </div>
+
+      <div className="mt-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[11px] font-medium text-muted">
+        Rodada {game.round ? <span>{game.round}</span> : null}
         {game.stadium && game.city ? <span>·</span> : null}
         {game.city ? <span>{game.city}</span> : null}
       </div>
 
-      <div className="mt-4 border-t border-duo-border/70 pt-3 text-center">
-        <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
-          <div className="text-center sm:text-left">
-            <p className="text-xs font-bold text-muted">Seu palpite</p>
-            <div className="mt-1">
-              <GuessInputs gameId={game.id} draft={draft} onDraftChange={onDraftChange} />
-            </div>
-          </div>
-          <div className="text-center sm:text-right">
-            <p className="text-xs font-bold text-muted">Os palpites encerram às</p>
-            <p className="mt-1 text-base font-extrabold tabular-nums text-duo-ink">{formatTime(game.date_closing_game)}</p>
-          </div>
-        </div>
+      <div className="mt-2 text-center text-[11px] font-bold text-muted">
+        Palpites encerram às <span className="tabular-nums text-duo-ink">{formatTime(game.date_closing_game)}</span>
       </div>
     </article>
   );
 }
 
+function CompactTeamName({ name, code, align }: { name: string; code?: string | null; align: "left" | "right" }) {
+  return (
+    <span className={`min-w-0 truncate text-base font-semibold leading-none text-duo-ink sm:text-lg ${align === "right" ? "text-right" : "text-left"}`}>
+      <span className="sm:hidden">{formatTeamCode(name, code)}</span>
+      <span className="hidden sm:inline">{name}</span>
+    </span>
+  );
+}
+
 function TeamSide({ name, code, align }: { name: string; code?: string | null; align: "left" | "right" }) {
+  const imgEl = <FlagImage name={name} code={code} className="h-7 w-7" />;
+
+  return (
+    <div className={`flex min-w-0 items-center gap-2 ${align === "right" ? "justify-end" : "justify-start"}`}>
+      <span className="min-w-0 text-base font-bold text-duo-ink sm:text-lg">{name}</span>
+      {imgEl}
+    </div>
+  );
+}
+
+function FlagImage({ name, code, className }: { name: string; code?: string | null; className: string }) {
   const fifaUrl = code ? `https://api.fifa.com/api/v3/picture/flags-sq-4/${code}` : undefined;
   const [src, setSrc] = useState<string | undefined>(fifaUrl);
 
@@ -957,28 +970,25 @@ function TeamSide({ name, code, align }: { name: string; code?: string | null; a
       alt={name}
       title={name}
       onError={handleImgError}
-      className="h-7 w-7 shrink-0 rounded-sm object-cover"
+      className={`${className} shrink-0 object-cover`}
     />
   ) : (
-    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm bg-duo-border text-xs font-bold">{name.split(" ").map(s=>s[0]).slice(0,2).join("")}</div>
+    <div className={`${className} flex shrink-0 items-center justify-center bg-duo-border text-xs font-bold`}>{formatTeamCode(name, code)}</div>
   );
 
-  return (
-    <div className={`flex min-w-0 items-center gap-2 ${align === "right" ? "justify-end" : "justify-start"}`}>
-      <span className="min-w-0 text-base font-bold text-duo-ink sm:text-lg">{name}</span>
-      {imgEl}
-    </div>
-  );
+  return imgEl;
 }
 
 function GuessInputs({
   gameId,
   draft,
   onDraftChange,
+  compact = false,
 }: {
   gameId: number;
   draft: GuessDraft;
   onDraftChange: Dispatch<SetStateAction<Record<number, GuessDraft>>>;
+  compact?: boolean;
 }) {
   function handleChange(field: "first" | "second", value: string) {
     const sanitized = value.replace(/[^0-9]/g, "");
@@ -992,9 +1002,9 @@ function GuessInputs({
   }
 
   return (
-    <span className="inline-flex items-center justify-center gap-2">
+    <span className={`inline-flex items-center justify-center ${compact ? "gap-1" : "gap-2"}`}>
       <input
-        className="duo-input duo-score-input h-11 w-14 px-2 text-lg font-extrabold"
+        className={`duo-input duo-score-input px-2 font-extrabold ${compact ? "h-8 w-8 rounded-sm text-base" : "h-11 w-14 text-lg"}`}
         type="number"
         min={0}
         inputMode="numeric"
@@ -1003,9 +1013,9 @@ function GuessInputs({
         onChange={(event) => handleChange("first", event.target.value)}
         aria-label={`Palpite do primeiro time no jogo ${gameId}`}
       />
-      <span className="text-base font-extrabold text-muted">x</span>
+      <span className={`${compact ? "text-sm" : "text-base"} font-extrabold text-muted`}>x</span>
       <input
-        className="duo-input duo-score-input h-11 w-14 px-2 text-lg font-extrabold"
+        className={`duo-input duo-score-input px-2 font-extrabold ${compact ? "h-8 w-8 rounded-sm text-base" : "h-11 w-14 text-lg"}`}
         type="number"
         min={0}
         inputMode="numeric"
@@ -1074,11 +1084,39 @@ function formatDateLabel(date: Date, includeTodayLabel: boolean) {
   return `Hoje · ${label}`;
 }
 
+function formatCompactDateLabel(value: string) {
+  const date = new Date(value);
+  const weekday = new Intl.DateTimeFormat("pt-BR", { weekday: "short" })
+    .format(date)
+    .replace(".", "")
+    .toUpperCase();
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+
+  return `${weekday} ${day}/${month}/${year}`;
+}
+
 function formatTime(value: string) {
   return new Intl.DateTimeFormat("pt-BR", {
     hour: "2-digit",
     minute: "2-digit",
   }).format(new Date(value));
+}
+
+function formatTeamCode(name: string, code?: string | null) {
+  if (code === "KOR") return "COR";
+  if (code === "CZE") return "TCH";
+  if (code === "ZAF" || name.toLowerCase().includes("áfrica do sul")) return "AFS";
+  if (code) return code.slice(0, 3).toUpperCase();
+
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 3)
+    .toUpperCase();
 }
 
 function calculateRankingByPeriod(

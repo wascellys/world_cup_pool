@@ -78,5 +78,6 @@ export type Game = {
   city: string | null;
   stadium: string | null;
   round: string | null;
+  group: string | null;
   guessed?: Guess;
 };
