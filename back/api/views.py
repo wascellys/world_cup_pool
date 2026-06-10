@@ -460,6 +460,44 @@ class GuessViewSet(ModelViewSet):
             return None
         return ParticipantPool.objects.filter(participant=participante, pool__cod=pool_cod).first()
 
+    @action(detail=False, methods=['get'])
+    def import_options(self, request):
+        pool_cod = request.query_params.get("pool")
+        game_id = request.query_params.get("game")
+        participant_pool = self._get_participant_pool(pool_cod)
+        if not participant_pool:
+            return Response({'message': 'you are not participating in this pool'}, status=status.HTTP_403_FORBIDDEN)
+
+        try:
+            game = Game.objects.get(pk=game_id)
+        except (Game.DoesNotExist, TypeError, ValueError):
+            return Response({'message': 'Game not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        guesses = (
+            Guess.objects
+            .filter(
+                game=game,
+                participant__participant=participant_pool.participant,
+                participant__status='approved',
+            )
+            .exclude(participant__pool=participant_pool.pool)
+            .select_related('participant__pool')
+            .order_by('participant__pool__name', 'participant__pool__cod')
+        )
+
+        return Response({
+            'data': [
+                {
+                    'id': guess.id,
+                    'pool_name': guess.participant.pool.name,
+                    'pool_cod': guess.participant.pool.cod,
+                    'guess_first_team': guess.guess_first_team,
+                    'guess_second_team': guess.guess_second_team,
+                }
+                for guess in guesses
+            ],
+        }, status=status.HTTP_200_OK)
+
     def create(self, request, *args, **kwargs):
         pool_cod = request.data.get("pool")
         participant_pool = self._get_participant_pool(pool_cod)

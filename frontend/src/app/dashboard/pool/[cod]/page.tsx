@@ -7,11 +7,19 @@ import { AppShell } from "@/components/AppShell";
 import { useAuth } from "@/lib/auth";
 import { api } from "@/lib/api";
 import { useToast } from "@/lib/toast";
-import type { Game, Guess, Pool, RankingEntry, ParticipantPool } from "@/lib/types";
+import type { Game, Guess, GuessImportOption, Pool, RankingEntry, ParticipantPool } from "@/lib/types";
 
 type GuessDraft = {
   first: string;
   second: string;
+};
+
+type ImportGuessModalState = {
+  game: Game;
+  options: GuessImportOption[];
+  selectedOptionId: number | null;
+  loading: boolean;
+  error: string | null;
 };
 
 type RankingViewType = "general" | "byPeriod";
@@ -43,6 +51,7 @@ export default function PoolGamesPage() {
   const [pendingParticipants, setPendingParticipants] = useState<ParticipantPool[]>([]);
   const [selectedParticipant, setSelectedParticipant] = useState<ParticipantPool | null>(null);
   const [participantHistory, setParticipantHistory] = useState<any[]>([]);
+  const [importGuessModal, setImportGuessModal] = useState<ImportGuessModalState | null>(null);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [loading, setLoading] = useState(false);
   const [joining, setJoining] = useState(false);
@@ -278,6 +287,62 @@ export default function PoolGamesPage() {
   function closeParticipant() {
     setSelectedParticipant(null);
     setParticipantHistory([]);
+  }
+
+  async function openImportGuessModal(game: Game) {
+    setImportGuessModal({
+      game,
+      options: [],
+      selectedOptionId: null,
+      loading: true,
+      error: null,
+    });
+
+    try {
+      const response = await authedApi.get<{ data: GuessImportOption[] }>(
+        `/guess/import_options/?pool=${cod}&game=${game.id}`,
+      );
+      const options = response.data ?? [];
+      setImportGuessModal({
+        game,
+        options,
+        selectedOptionId: options[0]?.id ?? null,
+        loading: false,
+        error: null,
+      });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Erro ao carregar palpites";
+      setImportGuessModal({
+        game,
+        options: [],
+        selectedOptionId: null,
+        loading: false,
+        error: message,
+      });
+    }
+  }
+
+  function closeImportGuessModal() {
+    setImportGuessModal(null);
+  }
+
+  function selectImportGuessOption(optionId: number) {
+    setImportGuessModal((current) => current ? { ...current, selectedOptionId: optionId } : current);
+  }
+
+  function saveImportedGuess() {
+    if (!importGuessModal?.selectedOptionId) return;
+    const selectedOption = importGuessModal.options.find((option) => option.id === importGuessModal.selectedOptionId);
+    if (!selectedOption) return;
+
+    setDrafts((current) => ({
+      ...current,
+      [importGuessModal.game.id]: {
+        first: selectedOption.guess_first_team,
+        second: selectedOption.guess_second_team,
+      },
+    }));
+    closeImportGuessModal();
   }
 
   async function handleCopyCode() {
@@ -549,6 +614,7 @@ export default function PoolGamesPage() {
                   games={todayGames}
                   drafts={drafts}
                   onDraftChange={setDrafts}
+                  onImportGuess={openImportGuessModal}
                   onSave={() => void handleSaveGuesses(todayKey, todayGames)}
                   saving={savingDayKey === todayKey}
                   now={now}
@@ -571,6 +637,7 @@ export default function PoolGamesPage() {
                         games={dayGames}
                         drafts={drafts}
                         onDraftChange={setDrafts}
+                        onImportGuess={openImportGuessModal}
                         onSave={() =>
                           void handleSaveGuesses(dayKey, dayGames)
                         }
@@ -631,7 +698,121 @@ export default function PoolGamesPage() {
           </div>
         </div>
       ) : null}
+      {importGuessModal ? (
+        <ImportGuessModal
+          state={importGuessModal}
+          onSelect={selectImportGuessOption}
+          onSave={saveImportedGuess}
+          onCancel={closeImportGuessModal}
+        />
+      ) : null}
     </AppShell>
+  );
+}
+
+function ImportGuessModal({
+  state,
+  onSelect,
+  onSave,
+  onCancel,
+}: {
+  state: ImportGuessModalState;
+  onSelect: (optionId: number) => void;
+  onSave: () => void;
+  onCancel: () => void;
+}) {
+  const { game, options, selectedOptionId, loading, error } = state;
+  const canSave = selectedOptionId != null && !loading;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <div className="w-full max-w-lg">
+        <div className="duo-card p-5">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h3 className="text-lg font-extrabold">Importar palpite</h3>
+              <p className="mt-1 text-xs text-muted">
+                {formatTeamCode(game.first_team.name, game.first_team.code)} x {formatTeamCode(game.second_team.name, game.second_team.code)}
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-4">
+            {loading ? (
+              <p className="text-sm text-muted">Carregando...</p>
+            ) : error ? (
+              <p className="text-sm font-bold text-red-600">{error}</p>
+            ) : options.length === 0 ? (
+              <p className="text-sm text-muted">Nenhum palpite encontrado em outros bolões para este jogo.</p>
+            ) : (
+              <div className="space-y-2">
+                {options.map((option) => {
+                  const selected = selectedOptionId === option.id;
+                  return (
+                    <label
+                      key={option.id}
+                      className={`flex cursor-pointer items-center justify-between gap-3 rounded-duo border px-4 py-3 transition ${selected
+                          ? "border-duo-green bg-duo-green/10"
+                          : "border-duo-border bg-duo-card/60 hover:border-duo-green/50"
+                        }`}
+                    >
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-extrabold">{option.pool_name}</p>
+                        <div className="mt-2 flex items-center gap-2">
+                          <FlagScore
+                            name={game.first_team.name}
+                            code={game.first_team.code}
+                            value={option.guess_first_team}
+                          />
+                          <span className="text-xs font-extrabold text-muted">x</span>
+                          <FlagScore
+                            name={game.second_team.name}
+                            code={game.second_team.code}
+                            value={option.guess_second_team}
+                          />
+                        </div>
+                      </div>
+                      <input
+                        type="checkbox"
+                        name="import-guess-option"
+                        checked={selected}
+                        onChange={() => onSelect(option.id)}
+                        className="h-4 w-4 shrink-0 accent-duo-green"
+                        aria-label={`Importar palpite do bolão ${option.pool_name}`}
+                      />
+                    </label>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          <div className="mt-5 flex justify-end gap-2">
+            <button className="duo-btn-secondary px-4 py-2 text-sm" onClick={onCancel} type="button">
+              Cancelar
+            </button>
+            <button
+              className="duo-btn-primary px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-40"
+              onClick={onSave}
+              disabled={!canSave}
+              type="button"
+            >
+              Salvar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FlagScore({ name, code, value }: { name: string; code?: string | null; value: string }) {
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <FlagImage name={name} code={code} className="h-5 w-7" />
+      <span className="text-xs font-extrabold uppercase text-duo-ink">{formatTeamCode(name, code)}</span>
+      <span className="min-w-5 text-center text-sm font-extrabold tabular-nums text-duo-ink">{value}</span>
+    </span>
   );
 }
 
@@ -800,6 +981,7 @@ function GamesDayPanel({
   games,
   drafts,
   onDraftChange,
+  onImportGuess,
   onSave,
   saving,
   now,
@@ -810,6 +992,7 @@ function GamesDayPanel({
   games: Game[];
   drafts: Record<number, GuessDraft>;
   onDraftChange: Dispatch<SetStateAction<Record<number, GuessDraft>>>;
+  onImportGuess: (game: Game) => void;
   onSave: () => void;
   saving: boolean;
   now: number;
@@ -839,6 +1022,7 @@ function GamesDayPanel({
                   game={game}
                   draft={drafts[game.id] ?? buildDraftForGame(game)}
                   onDraftChange={onDraftChange}
+                  onImportGuess={onImportGuess}
                 />
               ),
             )}
@@ -924,10 +1108,12 @@ function OpenGameCard({
   game,
   draft,
   onDraftChange,
+  onImportGuess,
 }: {
   game: Game;
   draft: GuessDraft;
   onDraftChange: Dispatch<SetStateAction<Record<number, GuessDraft>>>;
+  onImportGuess: (game: Game) => void;
 }) {
   return (
     <article className="border-b border-duo-border bg-duo-card/80 px-4 py-3">
@@ -943,6 +1129,16 @@ function OpenGameCard({
         <GuessInputs gameId={game.id} draft={draft} onDraftChange={onDraftChange} compact />
         <FlagImage name={game.second_team.name} code={game.second_team.code} className="h-7 w-9" />
         <CompactTeamName name={game.second_team.name} code={game.second_team.code} align="left" />
+      </div>
+
+      <div className="mt-2 text-center">
+        <button
+          type="button"
+          onClick={() => onImportGuess(game)}
+          className="text-xs font-bold text-duo-greenDark underline-offset-4 transition hover:text-duo-green hover:underline"
+        >
+          Importar palpite
+        </button>
       </div>
 
       <div className="mt-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[11px] font-medium text-muted">

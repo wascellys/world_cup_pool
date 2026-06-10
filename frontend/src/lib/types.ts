@@ -67,6 +67,14 @@ export type Guess = {
   points_earned?: number;
 };
 
+export type GuessImportOption = {
+  id: number;
+  pool_name: string;
+  pool_cod: string;
+  guess_first_team: string;
+  guess_second_team: string;
+};
+
 export type Game = {
   id: number;
   first_team: Country;
