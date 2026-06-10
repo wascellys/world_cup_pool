@@ -758,19 +758,7 @@ function ImportGuessModal({
                     >
                       <div className="min-w-0">
                         <p className="truncate text-sm font-extrabold">{option.pool_name}</p>
-                        <div className="mt-2 flex items-center gap-2">
-                          <FlagScore
-                            name={game.first_team.name}
-                            code={game.first_team.code}
-                            value={option.guess_first_team}
-                          />
-                          <span className="text-xs font-extrabold text-muted">x</span>
-                          <FlagScore
-                            name={game.second_team.name}
-                            code={game.second_team.code}
-                            value={option.guess_second_team}
-                          />
-                        </div>
+                        <ImportGuessScore game={game} option={option} />
                       </div>
                       <input
                         type="checkbox"
@@ -806,12 +794,16 @@ function ImportGuessModal({
   );
 }
 
-function FlagScore({ name, code, value }: { name: string; code?: string | null; value: string }) {
+function ImportGuessScore({ game, option }: { game: Game; option: GuessImportOption }) {
   return (
-    <span className="inline-flex items-center gap-1.5">
-      <FlagImage name={name} code={code} className="h-5 w-7" />
-      <span className="text-xs font-extrabold uppercase text-duo-ink">{formatTeamCode(name, code)}</span>
-      <span className="min-w-5 text-center text-sm font-extrabold tabular-nums text-duo-ink">{value}</span>
+    <span className="mt-2 inline-flex items-center gap-1.5">
+      <span className="text-xs font-extrabold uppercase text-duo-ink">{formatTeamCode(game.first_team.name, game.first_team.code)}</span>
+      <FlagImage name={game.first_team.name} code={game.first_team.code} className="h-5 w-7" />
+      <span className="min-w-4 text-center text-sm font-extrabold tabular-nums text-duo-ink">{option.guess_first_team}</span>
+      <span className="text-xs font-extrabold text-muted">x</span>
+      <span className="min-w-4 text-center text-sm font-extrabold tabular-nums text-duo-ink">{option.guess_second_team}</span>
+      <FlagImage name={game.second_team.name} code={game.second_team.code} className="h-5 w-7" />
+      <span className="text-xs font-extrabold uppercase text-duo-ink">{formatTeamCode(game.second_team.name, game.second_team.code)}</span>
     </span>
   );
 }
