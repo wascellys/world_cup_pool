@@ -14,7 +14,6 @@ from .serializers import ParticipantSerializer, PoolSerializer, GameSerializer, 
 
 from django.contrib.auth.models import User
 from django.db import transaction
-from django.db.models import Q
 from rest_framework.response import Response
 
 from .models import Participant, Pool, Game, ParticipantPool, Guess
@@ -351,17 +350,11 @@ class PoolViewSet(ModelViewSet):
         except ParticipantPool.DoesNotExist:
             return Response({'message': 'participant not found in this pool'}, status=status.HTTP_404_NOT_FOUND)
 
-        guesses = (
-            Guess.objects
-            .filter(participant=participant_pool)
-            .filter(
-                Q(game__score_first_team__isnull=False) & ~Q(game__score_first_team='') |
-                Q(game__score_second_team__isnull=False) & ~Q(game__score_second_team='')
-            )
-            .select_related('game')
-        )
+        guesses = Guess.objects.filter(participant=participant_pool).select_related('game')
         result = []
         for g in guesses:
+            if not is_guessing_closed(g.game):
+                continue
             guess_data = GuessSerializer(g).data
             guess_data['points_earned'] = calculate_guess_points(g, g.game, pool)
             result.append(guess_data)

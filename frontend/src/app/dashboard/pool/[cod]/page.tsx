@@ -362,9 +362,9 @@ export default function PoolGamesPage() {
     () =>
       participantHistory.filter((guess) => {
         const game = games.find((currentGame) => currentGame.id === guess.game);
-        return game ? hasGameResult(game) : false;
+        return game ? isGameClosed(game, now) : false;
       }),
-    [games, participantHistory],
+    [games, now, participantHistory],
   );
 
   if (!token) {
@@ -1266,14 +1266,6 @@ function getTimePartsInAppTimeZone(date: Date) {
     hour: parts.find((part) => part.type === "hour")?.value ?? "00",
     minute: parts.find((part) => part.type === "minute")?.value ?? "00",
   };
-}
-
-function hasGameResult(game: Game) {
-  return hasScoreValue(game.score_first_team) || hasScoreValue(game.score_second_team);
-}
-
-function hasScoreValue(value: string | null | undefined) {
-  return value != null && String(value).trim() !== "";
 }
 
 function buildDraftForGame(game: Game): GuessDraft {
