@@ -50,7 +50,7 @@ export default function PoolGamesPage() {
   const [participants, setParticipants] = useState<ParticipantPool[]>([]);
   const [pendingParticipants, setPendingParticipants] = useState<ParticipantPool[]>([]);
   const [selectedParticipant, setSelectedParticipant] = useState<ParticipantPool | null>(null);
-  const [participantHistory, setParticipantHistory] = useState<any[]>([]);
+  const [participantHistory, setParticipantHistory] = useState<Guess[]>([]);
   const [importGuessModal, setImportGuessModal] = useState<ImportGuessModalState | null>(null);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -269,7 +269,7 @@ export default function PoolGamesPage() {
     setParticipantHistory([]);
     try {
       const res = await authedApi.get<any>(`/pool/${cod}/participant_guesses/?participant_pool_id=${participantPoolId}`);
-      const data: any[] = res.data ?? res ?? [];
+      const data: Guess[] = res.data ?? res ?? [];
       setParticipantHistory(data);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Erro ao carregar histórico');
@@ -358,13 +358,27 @@ export default function PoolGamesPage() {
     () => Array.from(allGamesByDay.entries()).sort(([a], [b]) => a.localeCompare(b)),
     [allGamesByDay],
   );
+  const gamesById = useMemo(
+    () => new Map(games.map((game) => [game.id, game])),
+    [games],
+  );
   const completedParticipantHistory = useMemo(
     () =>
-      participantHistory.filter((guess) => {
-        const game = games.find((currentGame) => currentGame.id === guess.game);
-        return game ? isGameClosed(game, now) : false;
-      }),
-    [games, now, participantHistory],
+      participantHistory
+        .filter((guess) => {
+          const game = gamesById.get(guess.game);
+          return game ? isGameClosed(game, now) : false;
+        })
+        .sort((a, b) => {
+          const gameA = gamesById.get(a.game);
+          const gameB = gamesById.get(b.game);
+          const timeA = gameA ? new Date(gameA.date_game).getTime() : 0;
+          const timeB = gameB ? new Date(gameB.date_game).getTime() : 0;
+
+          if (timeA !== timeB) return timeB - timeA;
+          return b.id - a.id;
+        }),
+    [gamesById, now, participantHistory],
   );
 
   if (!token) {
@@ -675,7 +689,7 @@ export default function PoolGamesPage() {
                 ) : (
                   <div className="mt-3 space-y-3">
                     {completedParticipantHistory.map((g) => {
-                      const game = games.find((gg) => gg.id === g.game) as Game | undefined;
+                      const game = gamesById.get(g.game);
                       return (
                         <div key={g.id} className="rounded-duo border border-duo-border bg-duo-card/60 px-4 py-3">
                           <div className="flex items-center justify-between">
