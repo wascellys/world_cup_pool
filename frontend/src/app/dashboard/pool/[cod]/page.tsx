@@ -667,38 +667,36 @@ export default function PoolGamesPage() {
         </div>
       </div>
       {selectedParticipant ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="max-w-2xl w-full">
-            <div className="duo-card p-5">
-              <div className="flex items-start justify-between gap-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 sm:p-4">
+          <div className="w-full max-w-2xl">
+            <div className="duo-card flex max-h-[calc(100vh-2rem)] flex-col overflow-hidden p-4 sm:p-5">
+              <div className="flex shrink-0 items-start justify-between gap-4">
                 <div>
                   <h3 className="text-lg font-extrabold">{selectedParticipant.participant.name}</h3>
                   {selectedParticipant.created_at ? <p className="text-xs text-muted">Entrou em {new Date(selectedParticipant.created_at).toLocaleString()}</p> : null}
                 </div>
-                <div>
-                  <button className="duo-btn-secondary" onClick={closeParticipant} type="button">Fechar</button>
-                </div>
+                <button className="duo-btn-secondary shrink-0" onClick={closeParticipant} type="button">Fechar</button>
               </div>
 
-              <div className="mt-4">
-                <h4 className="font-bold">Histórico de palpites</h4>
+              <div className="mt-4 flex min-h-0 flex-1 flex-col">
+                <h4 className="shrink-0 font-bold">Histórico de palpites</h4>
                 {loadingHistory ? (
                   <p className="text-sm text-muted">Carregando...</p>
                 ) : completedParticipantHistory.length === 0 ? (
                   <p className="mt-3 text-sm text-muted">Nenhum palpite de jogo encerrado encontrado para este participante.</p>
                 ) : (
-                  <div className="mt-3 space-y-3">
+                  <div className="mt-3 min-h-0 space-y-3 overflow-y-auto pr-1">
                     {completedParticipantHistory.map((g) => {
                       const game = gamesById.get(g.game);
                       return (
-                        <div key={g.id} className="rounded-duo border border-duo-border bg-duo-card/60 px-4 py-3">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="font-bold">{game ? `${game.first_team.name} x ${game.second_team.name}` : `Jogo ${g.game}`}</p>
+                        <div key={g.id} className="rounded-duo border border-duo-border bg-duo-card/60 px-3 py-3 sm:px-4">
+                          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+                            <div className="min-w-0">
+                              <p className="text-sm font-bold leading-snug sm:text-base">{game ? `${game.first_team.name} x ${game.second_team.name}` : `Jogo ${g.game}`}</p>
                               <p className="text-xs text-muted">Data: {game ? formatDateLabel(new Date(game.date_game), false) : '-'}</p>
                             </div>
-                            <div className="text-right">
-                              <p className="font-extrabold">Palpite: {g.guess_first_team} x {g.guess_second_team}</p>
+                            <div className="shrink-0 text-right">
+                              <p className="whitespace-nowrap text-[13px] font-extrabold tabular-nums sm:text-sm">Palpite: {g.guess_first_team} x {g.guess_second_team}</p>
                               <p className="text-xs text-muted">Pontos: {g.points_earned ?? g.points_earned === 0 ? g.points_earned : '-'}</p>
                             </div>
                           </div>
@@ -1296,8 +1294,16 @@ function buildDrafts(games: Game[]) {
   }, {});
 }
 
+function compareGamesByDate(a: Game, b: Game) {
+  const timeA = new Date(a.date_game).getTime();
+  const timeB = new Date(b.date_game).getTime();
+
+  if (timeA !== timeB) return timeA - timeB;
+  return a.id - b.id;
+}
+
 function groupGamesByDay(games: Game[]) {
-  return games.reduce<Map<string, Game[]>>((accumulator, game) => {
+  return games.slice().sort(compareGamesByDate).reduce<Map<string, Game[]>>((accumulator, game) => {
     const key = getLocalDateKey(new Date(game.date_game));
     const current = accumulator.get(key) ?? [];
     accumulator.set(key, [...current, game]);

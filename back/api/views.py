@@ -365,7 +365,7 @@ class PoolViewSet(ModelViewSet):
 class GameViewSet(ModelViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
-    queryset = Game.objects.all()
+    queryset = Game.objects.all().order_by('date_game', 'id')
     serializer_class = GameSerializer
 
     def list(self, request, *args, **kwargs):
