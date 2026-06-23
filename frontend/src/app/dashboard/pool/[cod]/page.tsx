@@ -24,7 +24,7 @@ type ImportGuessModalState = {
 
 type RankingViewType = "general" | "byPeriod";
 type TabId = "games" | "participants" | "ranking";
-type GamesSection = "today" | "all";
+type GamesSection = "today" | "upcoming" | "all";
 type ParticipantsSection = "all" | "requests";
 
 const APP_TIME_ZONE = "America/Sao_Paulo";
@@ -358,6 +358,14 @@ export default function PoolGamesPage() {
     () => Array.from(allGamesByDay.entries()).sort(([a], [b]) => a.localeCompare(b)),
     [allGamesByDay],
   );
+  const upcomingGamesByDay = useMemo(
+    () => groupGamesByDay(games.filter((game) => !hasOfficialScore(game))),
+    [games],
+  );
+  const upcomingGameDayEntries = useMemo(
+    () => Array.from(upcomingGamesByDay.entries()).sort(([a], [b]) => a.localeCompare(b)),
+    [upcomingGamesByDay],
+  );
   const gamesById = useMemo(
     () => new Map(games.map((game) => [game.id, game])),
     [games],
@@ -613,6 +621,13 @@ export default function PoolGamesPage() {
                   </button>
                   <button
                     type="button"
+                    className={`px-4 py-2 rounded-duo font-bold text-sm ${gamesTab === "upcoming" ? "bg-duo-green text-white" : "bg-duo-card border border-duo-border text-duo-ink hover:border-duo-green"}`}
+                    onClick={() => setGamesTab("upcoming")}
+                  >
+                    Proximos
+                  </button>
+                  <button
+                    type="button"
                     className={`px-4 py-2 rounded-duo font-bold text-sm ${gamesTab === "all" ? "bg-duo-green text-white" : "bg-duo-card border border-duo-border text-duo-ink hover:border-duo-green"}`}
                     onClick={() => setGamesTab("all")}
                   >
@@ -634,6 +649,33 @@ export default function PoolGamesPage() {
                   now={now}
                   emptyMessage="Nenhum jogo programado para hoje."
                 />
+              ) : null}
+
+              {pool.is_participant && gamesTab === "upcoming" ? (
+                upcomingGameDayEntries.length === 0 ? (
+                  <div className="duo-card p-6">
+                    <p className="font-bold">Nenhum jogo sem resultado cadastrado.</p>
+                  </div>
+                ) : (
+                  <div className="grid gap-4">
+                    {upcomingGameDayEntries.map(([dayKey, dayGames]) => (
+                      <GamesDayPanel
+                        key={dayKey}
+                        dayKey={dayKey}
+                        label={formatDateLabel(new Date(`${dayKey}T12:00:00`), dayKey === todayKey)}
+                        games={dayGames}
+                        drafts={drafts}
+                        onDraftChange={setDrafts}
+                        onImportGuess={openImportGuessModal}
+                        onSave={() =>
+                          void handleSaveGuesses(dayKey, dayGames)
+                        }
+                        saving={savingDayKey === dayKey}
+                        now={now}
+                      />
+                    ))}
+                  </div>
+                )
               ) : null}
 
               {pool.is_participant && gamesTab === "all" ? (
@@ -1051,7 +1093,7 @@ function GamesDayPanel({
 }
 
 function ClosedGameCard({ game }: { game: Game }) {
-  const hasOfficialScore = game.score_first_team != null && game.score_second_team != null;
+  const hasScore = hasOfficialScore(game);
   const hasGuess = game.guessed != null;
   const points = game.guessed?.points_earned;
 
@@ -1091,7 +1133,7 @@ function ClosedGameCard({ game }: { game: Game }) {
       </div>
 
       <div className="mt-3 flex items-center justify-between gap-3 border-t border-duo-border/60 pt-3">
-        {hasOfficialScore ? (
+        {hasScore ? (
           <p className="text-xs text-muted">
             Placar final: {game.score_first_team} x {game.score_second_team}
           </p>
@@ -1257,6 +1299,10 @@ function GuessInputs({
 function isGameClosed(game: Game, now: number) {
   const closingTime = getEffectiveClosingTime(game);
   return Number.isFinite(closingTime) ? now >= closingTime : true;
+}
+
+function hasOfficialScore(game: Game) {
+  return game.score_first_team != null && game.score_first_team !== "" && game.score_second_team != null && game.score_second_team !== "";
 }
 
 function getEffectiveClosingTime(game: Game) {
